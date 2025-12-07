@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import './SignalControl.css';
 import trafficImage from '../../assets/signal-control.png';
+import { API_BASE_URL } from '../../config';
 
 const SignalControl = () => {
     const [file, setFile] = useState(null);
@@ -27,8 +28,7 @@ const SignalControl = () => {
         try {
             const form = new FormData();
             form.append("file", file);
-            const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
-            const res = await fetch(`${apiUrl}/signal/`, {
+            const res = await fetch(`${API_BASE_URL}/signal/`, {
                 method: "POST",
                 body: form,
             });

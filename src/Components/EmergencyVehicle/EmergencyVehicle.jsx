@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import './EmergencyVehicle.css';
 import emergencyImage from '../../assets/emergency-vehicle.png';
+import { API_BASE_URL } from '../../config';
 
 const EmergencyVehicle = () => {
     const [file, setFile] = useState(null);
@@ -27,8 +28,7 @@ const EmergencyVehicle = () => {
         try {
             const form = new FormData();
             form.append("file", file);
-            const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
-            const res = await fetch(`${apiUrl}/emergency/`, {
+            const res = await fetch(`${API_BASE_URL}/emergency/`, {
                 method: "POST",
                 body: form,
             });

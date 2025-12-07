@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import './ANPR-ATCC.css';
 import ANPR_ATCC_Img from '../../assets/anpr-atcc.png';
+import { API_BASE_URL } from '../../config';
 
 const ANPRATCC = () => {
   const [file, setFile] = useState(null);
@@ -28,20 +29,50 @@ const ANPRATCC = () => {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch("http://localhost:5000/anpr-atcc/", {
+      // Add ngrok header to upload request to bypass warning
+      const res = await fetch(`${API_BASE_URL}/anpr-atcc/`, {
         method: "POST",
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
         body: form,
       });
+
       if (!res.ok) {
         const errText = await res.text();
         throw new Error(errText || "Upload failed");
       }
       const data = await res.json();
+
       if (data.processedUrl) {
-        setVideoUrl(data.processedUrl);
+        // Handle relative URL by prepending API_BASE_URL
+        let finalUrl = data.processedUrl;
+        if (finalUrl.startsWith('/')) {
+          finalUrl = `${API_BASE_URL}${finalUrl}`;
+        }
+
+        // Fetch video as blob to bypass ngrok warning page for playback
+        try {
+          const vidRes = await fetch(finalUrl, {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          });
+          const vidBlob = await vidRes.blob();
+          const vidObjUrl = URL.createObjectURL(vidBlob);
+          setVideoUrl(vidObjUrl);
+        } catch (e) {
+          console.error("Failed to fetch video blob:", e);
+          // Fallback to direct URL if blob fetch fails
+          setVideoUrl(finalUrl);
+        }
         setImageUrl("");
       } else if (data.imageUrl) {
-        setImageUrl(data.imageUrl);
+        let finalImgUrl = data.imageUrl;
+        if (finalImgUrl.startsWith('/')) {
+          finalImgUrl = `${API_BASE_URL}${finalImgUrl}`;
+        }
+        setImageUrl(finalImgUrl);
         setVideoUrl("");
       }
     } catch (err) {

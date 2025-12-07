@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import './AccidentDetection.css';
 import accidentimg from '../../assets/accident-detection.png';
+import { API_BASE_URL } from '../../config';
 
 const AccidentDetection = () => {
     const [file, setFile] = useState(null);
@@ -27,8 +28,7 @@ const AccidentDetection = () => {
         try {
             const form = new FormData();
             form.append("file", file);
-            const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
-            const res = await fetch(`${apiUrl}/accident/`, {
+            const res = await fetch(`${API_BASE_URL}/accident/`, {
                 method: "POST",
                 body: form,
             });
