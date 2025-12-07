@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Intelligent-Traffic-System-Frontend/static/css/main.4113165e.css",
-    "main.js": "/Intelligent-Traffic-System-Frontend/static/js/main.431fd68f.js",
+    "main.js": "/Intelligent-Traffic-System-Frontend/static/js/main.2c4f5f5d.js",
     "static/media/traffic_image.png": "/Intelligent-Traffic-System-Frontend/static/media/traffic_image.712525d2d1d0ceb9327b.png",
     "static/media/signal-control.png": "/Intelligent-Traffic-System-Frontend/static/media/signal-control.c7cd9170f20170cb23ba.png",
     "static/media/emergency-vehicle.png": "/Intelligent-Traffic-System-Frontend/static/media/emergency-vehicle.38a05eba48b6155af6ff.png",
@@ -10,10 +10,10 @@
     "static/media/anpr-atcc.png": "/Intelligent-Traffic-System-Frontend/static/media/anpr-atcc.15227b6cf4dd0f8e0e1d.png",
     "index.html": "/Intelligent-Traffic-System-Frontend/index.html",
     "main.4113165e.css.map": "/Intelligent-Traffic-System-Frontend/static/css/main.4113165e.css.map",
-    "main.431fd68f.js.map": "/Intelligent-Traffic-System-Frontend/static/js/main.431fd68f.js.map"
+    "main.2c4f5f5d.js.map": "/Intelligent-Traffic-System-Frontend/static/js/main.2c4f5f5d.js.map"
   },
   "entrypoints": [
     "static/css/main.4113165e.css",
-    "static/js/main.431fd68f.js"
+    "static/js/main.2c4f5f5d.js"
   ]
 }
