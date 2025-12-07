@@ -6,11 +6,10 @@ import Footer from "./Components/Footer/Footer";
 import ANPR_ATCC from "./Components/ANPR-ATCC/ANPR-ATCC";
 
 const App = () => (
-  <BrowserRouter>
+  <BrowserRouter basename="/Intelligent-Traffic-System-Frontend">
     <Navbar />
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/Intelligent-Traffic-System" element={<Home />} />
       <Route path="/anpr-atcc" element={<ANPR_ATCC />} />
     </Routes>
     <Footer />
