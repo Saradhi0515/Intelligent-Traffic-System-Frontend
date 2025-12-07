@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/Intelligent-Traffic-System-Frontend/static/css/main.9c409912.css",
-    "main.js": "/Intelligent-Traffic-System-Frontend/static/js/main.c0deca70.js",
+    "main.js": "/Intelligent-Traffic-System-Frontend/static/js/main.b6716edb.js",
     "static/media/traffic_image.png": "/Intelligent-Traffic-System-Frontend/static/media/traffic_image.712525d2d1d0ceb9327b.png",
     "static/media/profile_logo.png": "/Intelligent-Traffic-System-Frontend/static/media/profile_logo.c25bc330dbdb443808ad.png",
     "static/media/anpr-atcc.png": "/Intelligent-Traffic-System-Frontend/static/media/anpr-atcc.15227b6cf4dd0f8e0e1d.png",
     "index.html": "/Intelligent-Traffic-System-Frontend/index.html",
     "main.9c409912.css.map": "/Intelligent-Traffic-System-Frontend/static/css/main.9c409912.css.map",
-    "main.c0deca70.js.map": "/Intelligent-Traffic-System-Frontend/static/js/main.c0deca70.js.map"
+    "main.b6716edb.js.map": "/Intelligent-Traffic-System-Frontend/static/js/main.b6716edb.js.map"
   },
   "entrypoints": [
     "static/css/main.9c409912.css",
-    "static/js/main.c0deca70.js"
+    "static/js/main.b6716edb.js"
   ]
 }
