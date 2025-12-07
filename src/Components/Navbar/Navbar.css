@@ -1,0 +1,57 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body {
+    height: 100vh;
+    background: #161515;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+}
+.img{
+    height: 100px;
+    margin-top: 5mm;
+    margin-left: -30mm;
+}
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 170px;
+}
+.nav-menu {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+    list-style: none;
+    font-size: 20px;
+}
+.nav-about-us{
+    padding: 10px 20px;
+    background: linear-gradient(267deg, #da7c25 0.36%, #b923e1 102.06%);
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: 0.5s;
+    margin-right: -25mm;
+}
+.nav-about-us:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px #b923e1, 0 0 40px #b923e1, 0 0 80px #b923e1;
+}
+.nav-menu a{
+    text-decoration: none;
+    color: inherit;
+}
+.nav-menu a:hover {
+    background: linear-gradient(270deg , #DF8908 10%, #B415FF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: 0.5s;
+}
+.nav-about-us a{
+    text-decoration: none !important; 
+    color: inherit;
+    display: inline-block;
+}
