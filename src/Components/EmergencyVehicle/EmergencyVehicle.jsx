@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import './EmergencyVehicle.css';
-import trafficImage from '../../assets/traffic_image.png';
+import emergencyImage from '../../assets/emergency-vehicle.png';
 
 const EmergencyVehicle = () => {
     const [file, setFile] = useState(null);
@@ -54,7 +54,7 @@ const EmergencyVehicle = () => {
 
     return (
         <div className="emergency-vehicle">
-            <img className="emergency-image" src={trafficImage} alt="Emergency Vehicle" />
+            <img className="emergency-image" src={emergencyImage} alt="Emergency Vehicle" />
             <h1 className="emergency-heading">Emergency Vehicle Module</h1>
             <p className="emergency-description">
                 The Emergency Vehicle module detects ambulances, fire trucks, and police cars to prioritize their passage through traffic.

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import './SignalControl.css';
-import trafficImage from '../../assets/traffic_image.png';
+import trafficImage from '../../assets/signal-control.png';
 
 const SignalControl = () => {
     const [file, setFile] = useState(null);

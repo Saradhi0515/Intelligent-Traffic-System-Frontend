@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import './AccidentDetection.css';
-import trafficImage from '../../assets/traffic_image.png';
+import accidentimg from '../../assets/accident-detection.png';
 
 const AccidentDetection = () => {
     const [file, setFile] = useState(null);
@@ -54,7 +54,7 @@ const AccidentDetection = () => {
 
     return (
         <div className="accident-detection">
-            <img className="accident-image" src={trafficImage} alt="Accident Detection" />
+            <img className="accident-image" src={accidentimg} alt="Accident Detection" />
             <h1 className="accident-heading">Accident Detection Module</h1>
             <p className="accident-description">
                 The Accident Detection module uses advanced AI to identify traffic accidents in real-time from video feeds.
