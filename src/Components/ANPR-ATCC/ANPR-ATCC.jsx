@@ -23,13 +23,53 @@ const ANPRATCC = () => {
     setImageUrl("");
   };
 
+  const pollStatus = async (jobId) => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/status/${jobId}`, {
+          headers: { "ngrok-skip-browser-warning": "true" }
+        });
+        const data = await res.json();
+
+        if (data.status === 'completed') {
+          clearInterval(interval);
+          setUploading(false);
+
+          let finalUrl = data.result_url;
+          if (finalUrl.startsWith('/')) {
+            finalUrl = `${API_BASE_URL}${finalUrl}`;
+          }
+
+          // Fetch video as blob to bypass ngrok warning page for playback
+          try {
+            const vidRes = await fetch(finalUrl, {
+              headers: { "ngrok-skip-browser-warning": "true" },
+            });
+            const vidBlob = await vidRes.blob();
+            const vidObjUrl = URL.createObjectURL(vidBlob);
+            setVideoUrl(vidObjUrl);
+          } catch (e) {
+            console.error("Failed to fetch video blob:", e);
+            setVideoUrl(finalUrl);
+          }
+        } else if (data.status === 'failed') {
+          clearInterval(interval);
+          setUploading(false);
+          alert(`Processing failed: ${data.error}`);
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
+      }
+    }, 2000); // Poll every 2 seconds
+  };
+
   const uploadToANPRATCC = async () => {
     if (!file) return alert("Choose a file first.");
     setUploading(true);
     try {
       const form = new FormData();
       form.append("file", file);
-      // Add ngrok header to upload request to bypass warning
+
       const res = await fetch(`${API_BASE_URL}/anpr-atcc/`, {
         method: "POST",
         headers: {
@@ -44,30 +84,12 @@ const ANPRATCC = () => {
       }
       const data = await res.json();
 
-      if (data.processedUrl) {
-        // Handle relative URL by prepending API_BASE_URL
-        let finalUrl = data.processedUrl;
-        if (finalUrl.startsWith('/')) {
-          finalUrl = `${API_BASE_URL}${finalUrl}`;
-        }
-
-        // Fetch video as blob to bypass ngrok warning page for playback
-        try {
-          const vidRes = await fetch(finalUrl, {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-            },
-          });
-          const vidBlob = await vidRes.blob();
-          const vidObjUrl = URL.createObjectURL(vidBlob);
-          setVideoUrl(vidObjUrl);
-        } catch (e) {
-          console.error("Failed to fetch video blob:", e);
-          // Fallback to direct URL if blob fetch fails
-          setVideoUrl(finalUrl);
-        }
-        setImageUrl("");
+      if (data.jobId) {
+        // Start polling
+        pollStatus(data.jobId);
       } else if (data.imageUrl) {
+        // Image flow remains synchronous
+        setUploading(false);
         let finalImgUrl = data.imageUrl;
         if (finalImgUrl.startsWith('/')) {
           finalImgUrl = `${API_BASE_URL}${finalImgUrl}`;
@@ -78,7 +100,6 @@ const ANPRATCC = () => {
     } catch (err) {
       console.error(err);
       alert(`Upload failed: ${err.message}`);
-    } finally {
       setUploading(false);
     }
   };
