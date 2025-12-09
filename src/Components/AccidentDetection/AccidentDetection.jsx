@@ -30,6 +30,9 @@ const AccidentDetection = () => {
             form.append("file", file);
             const res = await fetch(`${API_BASE_URL}/accident/`, {
                 method: "POST",
+                headers: {
+                    "ngrok-skip-browser-warning": "true",
+                },
                 body: form,
             });
             if (!res.ok) {
@@ -37,11 +40,33 @@ const AccidentDetection = () => {
                 throw new Error(errText || "Upload failed");
             }
             const data = await res.json();
+
             if (data.processedUrl) {
-                setVideoUrl(data.processedUrl);
+                let finalUrl = data.processedUrl;
+                if (finalUrl.startsWith('/')) {
+                    finalUrl = `${API_BASE_URL}${finalUrl}`;
+                }
+
+                try {
+                    const vidRes = await fetch(finalUrl, {
+                        headers: {
+                            "ngrok-skip-browser-warning": "true",
+                        },
+                    });
+                    const vidBlob = await vidRes.blob();
+                    const vidObjUrl = URL.createObjectURL(vidBlob);
+                    setVideoUrl(vidObjUrl);
+                } catch (e) {
+                    console.error("Failed to fetch video blob:", e);
+                    setVideoUrl(finalUrl);
+                }
                 setImageUrl("");
             } else if (data.imageUrl) {
-                setImageUrl(data.imageUrl);
+                let finalImgUrl = data.imageUrl;
+                if (finalImgUrl.startsWith('/')) {
+                    finalImgUrl = `${API_BASE_URL}${finalImgUrl}`;
+                }
+                setImageUrl(finalImgUrl);
                 setVideoUrl("");
             }
         } catch (err) {
