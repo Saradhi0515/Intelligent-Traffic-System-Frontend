@@ -4,51 +4,92 @@ import trafficImage from '../../assets/signal-control.png';
 import { API_BASE_URL } from '../../config';
 
 const SignalControl = () => {
-    const [file, setFile] = useState(null);
+    const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
     const [videoUrl, setVideoUrl] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
+    const [status, setStatus] = useState("");
 
     const onFileChange = (e) => {
-        const f = e.target.files?.[0];
-        if (!f) return;
-        if (!f.type.startsWith("video/") && !f.type.startsWith("image/")) {
-            alert("Please select an image or video file.");
-            e.target.value = "";
-            return;
-        }
-        setFile(f);
+        const selectedFiles = Array.from(e.target.files);
+        if (selectedFiles.length === 0) return;
+        setFiles(selectedFiles);
         setVideoUrl("");
-        setImageUrl("");
+        setStatus("");
     };
 
-    const uploadFile = async () => {
-        if (!file) return alert("Choose a file first.");
+    const pollStatus = async (jobId) => {
+        setStatus("Processing...");
+        const interval = setInterval(async () => {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/status/${jobId}`);
+                const data = await res.json();
+                if (data.status === 'completed') {
+                    clearInterval(interval);
+                    setVideoUrl(`${API_BASE_URL}${data.result_url}`);
+                    setStatus("Completed");
+                    setUploading(false);
+                } else if (data.status === 'failed') {
+                    clearInterval(interval);
+                    setStatus(`Failed: ${data.error}`);
+                    setUploading(false);
+                }
+            } catch (err) {
+                console.error(err);
+                clearInterval(interval);
+                setUploading(false);
+            }
+        }, 2000);
+    };
+
+    const uploadFiles = async () => {
+        if (files.length === 0) return alert("Choose files first.");
         setUploading(true);
+        setStatus("Uploading...");
         try {
             const form = new FormData();
-            form.append("file", file);
-            const res = await fetch(`${API_BASE_URL}/signal/`, {
+            files.forEach(file => {
+                form.append("files", file);
+            });
+
+            const res = await fetch(`${API_BASE_URL}/api/signal/upload`, {
                 method: "POST",
                 body: form,
             });
+
             if (!res.ok) {
                 const errText = await res.text();
                 throw new Error(errText || "Upload failed");
             }
             const data = await res.json();
-            if (data.processedUrl) {
-                setVideoUrl(data.processedUrl);
-                setImageUrl("");
-            } else if (data.imageUrl) {
-                setImageUrl(data.imageUrl);
-                setVideoUrl("");
-            }
+            pollStatus(data.jobId);
         } catch (err) {
             console.error(err);
             alert(`Upload failed: ${err.message}`);
-        } finally {
             setUploading(false);
+            setStatus("");
+        }
+    };
+
+    const runSample = async () => {
+        setUploading(true);
+        setStatus("Starting Simulation...");
+        setVideoUrl("");
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/signal/sample`, {
+                method: "POST",
+            });
+
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(errText || "Request failed");
+            }
+            const data = await res.json();
+            pollStatus(data.jobId);
+        } catch (err) {
+            console.error(err);
+            alert(`Simulation failed: ${err.message}`);
+            setUploading(false);
+            setStatus("");
         }
     };
 
@@ -61,12 +102,29 @@ const SignalControl = () => {
                 It helps in reducing congestion and improving the overall flow of traffic in urban areas.
             </p>
 
-            <div className="signal-upload">
-                <input type="file" accept="image/*,video/*" onChange={onFileChange} />
-                <button className="upload-btn" onClick={uploadFile} disabled={uploading}>
-                    {uploading ? "Uploading..." : "Upload"}
-                </button>
+            <div className="signal-actions">
+                <div className="action-group">
+                    <h3>Simulation Mode</h3>
+                    <button className="sample-btn" onClick={runSample} disabled={uploading}>
+                        {uploading && status.includes("Simulation") ? "Running..." : "Run Simulation Sample"}
+                    </button>
+                </div>
+
+                <div className="action-group">
+                    <h3>Detection Mode (Upload 2+ Videos)</h3>
+                    <input
+                        type="file"
+                        accept="video/*"
+                        multiple
+                        onChange={onFileChange}
+                    />
+                    <button className="upload-btn" onClick={uploadFiles} disabled={uploading || files.length === 0}>
+                        {uploading && !status.includes("Simulation") ? "Uploading..." : "Upload & Detect"}
+                    </button>
+                </div>
             </div>
+
+            {status && <p className="status-text">{status}</p>}
 
             {videoUrl && (
                 <div className="signal-result">
@@ -75,15 +133,6 @@ const SignalControl = () => {
                         controls
                         width="720"
                         style={{ maxWidth: "100%", borderRadius: 8 }}
-                    />
-                </div>
-            )}
-            {imageUrl && (
-                <div className="signal-result">
-                    <img
-                        src={imageUrl}
-                        alt="Processed result"
-                        style={{ maxWidth: "95%", borderRadius: 8 }}
                     />
                 </div>
             )}
