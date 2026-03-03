@@ -102,16 +102,12 @@ const SignalControl = () => {
                 It helps in reducing congestion and improving the overall flow of traffic in urban areas.
             </p>
 
-            <div className="signal-actions">
-                <div className="action-group">
-                    <h3>Simulation Mode</h3>
-                    <button className="sample-btn" onClick={runSample} disabled={uploading}>
-                        {uploading && status.includes("Simulation") ? "Running..." : "Run Simulation Sample"}
-                    </button>
-                </div>
+            <div className="signal-upload" style={{ justifyContent: 'center', gap: '30px' }}>
+                <button className="upload-btn" onClick={runSample} disabled={uploading}>
+                    {uploading && status.includes("Simulation") ? "Running Simulation..." : "Run Simulation"}
+                </button>
 
-                <div className="action-group">
-                    <h3>Detection Mode (Upload 2+ Videos)</h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <input
                         type="file"
                         accept="video/*"
