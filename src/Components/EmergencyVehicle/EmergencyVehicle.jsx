@@ -22,14 +22,54 @@ const EmergencyVehicle = () => {
         setImageUrl("");
     };
 
+    const pollStatus = async (jobId) => {
+        const interval = setInterval(async () => {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/status/${jobId}`, {
+                    headers: { "ngrok-skip-browser-warning": "true" }
+                });
+                const data = await res.json();
+
+                if (data.status === 'completed') {
+                    clearInterval(interval);
+                    setUploading(false);
+
+                    let finalUrl = data.result_url;
+                    if (finalUrl.startsWith('/')) {
+                        finalUrl = `${API_BASE_URL}${finalUrl}`;
+                    }
+
+                    try {
+                        const vidRes = await fetch(finalUrl, {
+                            headers: { "ngrok-skip-browser-warning": "true" },
+                        });
+                        const vidBlob = await vidRes.blob();
+                        const vidObjUrl = URL.createObjectURL(vidBlob);
+                        setVideoUrl(vidObjUrl);
+                    } catch (e) {
+                        console.error("Failed to fetch video blob:", e);
+                        setVideoUrl(finalUrl);
+                    }
+                } else if (data.status === 'failed') {
+                    clearInterval(interval);
+                    setUploading(false);
+                    alert(`Processing failed: ${data.error}`);
+                }
+            } catch (err) {
+                console.error("Polling error:", err);
+            }
+        }, 2000);
+    };
+
     const uploadFile = async () => {
         if (!file) return alert("Choose a file first.");
         setUploading(true);
         try {
             const form = new FormData();
             form.append("file", file);
-            const res = await fetch(`${API_BASE_URL}/emergency/`, {
+            const res = await fetch(`${API_BASE_URL}/api/emergency/upload`, {
                 method: "POST",
+                headers: { "ngrok-skip-browser-warning": "true" },
                 body: form,
             });
             if (!res.ok) {
@@ -37,17 +77,29 @@ const EmergencyVehicle = () => {
                 throw new Error(errText || "Upload failed");
             }
             const data = await res.json();
-            if (data.processedUrl) {
-                setVideoUrl(data.processedUrl);
+
+            if (data.jobId) {
+                pollStatus(data.jobId);
+            } else if (data.processedUrl) {
+                setUploading(false);
+                let finalUrl = data.processedUrl;
+                if (finalUrl.startsWith('/')) {
+                    finalUrl = `${API_BASE_URL}${finalUrl}`;
+                }
+                setVideoUrl(finalUrl);
                 setImageUrl("");
             } else if (data.imageUrl) {
-                setImageUrl(data.imageUrl);
+                setUploading(false);
+                let finalImgUrl = data.imageUrl;
+                if (finalImgUrl.startsWith('/')) {
+                    finalImgUrl = `${API_BASE_URL}${finalImgUrl}`;
+                }
+                setImageUrl(finalImgUrl);
                 setVideoUrl("");
             }
         } catch (err) {
             console.error(err);
             alert(`Upload failed: ${err.message}`);
-        } finally {
             setUploading(false);
         }
     };
