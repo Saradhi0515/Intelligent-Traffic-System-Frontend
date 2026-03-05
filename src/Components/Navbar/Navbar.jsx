@@ -15,7 +15,7 @@ const Navbar = () => {
                 <li><Link to="/emergency">Emergence Vehicle</Link></li>
             </ul>
             <div className="nav-about-us">
-                <Link to="/about">About Us</Link>
+                <Link to="https://pardhasaradhi.me">About Us</Link>
             </div>
         </div>
     );

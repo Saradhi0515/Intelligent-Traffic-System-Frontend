@@ -1,0 +1,2 @@
+﻿origin	https://github.com/Saradhi0515/Intelligent-Traffic-System-Frontend.git (fetch)
+origin	https://github.com/Saradhi0515/Intelligent-Traffic-System-Frontend.git (push)
